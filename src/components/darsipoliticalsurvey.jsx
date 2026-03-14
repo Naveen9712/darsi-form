@@ -4,7 +4,46 @@ const mandals = ["దర్శి", "డొనకొండ", "కురిచే
 
 const villagesByMandal = {
   దర్శి: ["దర్శి", "పొదిలి", "రాచర్ల", "రంగారెడ్డిపాలెం", "వల్లూరు"],
-  డొనకొండ: ["డొనకొండ", "ఆత్మకూరు", "కంభం", "మార్కాపురం"],
+  డొనకొండ: [
+    "అబ్బాయపాలెం",
+    "అక్కమాంబాపురం",
+    "అన్నవరం",
+    "బాలాపురం",
+    "బండెల్లపాయ",
+    "బండివెలిగండ్ల",
+    "బుక్కాపురం",
+    "చాలివేంద్ర",
+    "చందలూరు",
+    "చెరువు కొమ్మపాలెం",
+    "చిన్న ఉయ్యాలవాడ",
+    "దర్శి",
+    "దేవవరం",
+    "ఈస్ట్ చౌటపాలెం",
+    "ఈస్ట్ వీరయ్యపాలెం",
+    "ఈస్ట్ వెంకటాపురం",
+    "గణేశ్వరపురం",
+    "జమ్మిగుంపల (కే.ఎస్.పాలెం)",
+    "జముకులదిన్నె",
+    "కొర్లమడుగు",
+    "కొత్తపల్లి",
+    "కృష్ణాపురం",
+    "లక్ష్మీనారాయణపురం",
+    "లంకోజనపల్లె",
+    "పెద్ద ఉయ్యాలవాడ",
+    "పోతకమూరు",
+    "పోతవరం",
+    "రాజంపల్లి",
+    "రామచంద్రాపురం",
+    "సమంతపూడి",
+    "తనం చింతల",
+    "తిమ్మయ్యపాలెం",
+    "త్రిపురసుందరిపురం",
+    "తుమ్మెడలపాడు",
+    "వెంకటాచలం పల్లె",
+    "ఎర్రోబానపల్లె",
+    "బసిరెడ్డిపల్లి",
+    "పాపిరెడ్డిపాలెం",
+  ],
   కురిచేడు: ["కురిచేడు", "బెస్తవారిపేట", "వేదులపాడు"],
   జాట్లూరు: ["జాట్లూరు", "కనిగిరి", "పొదిలి"],
   ముందుమూరు: ["ముందుమూరు", "ఒంగోలు", "చేబ్రోలు"],
@@ -104,6 +143,8 @@ export default function DarsiPoliticalSurvey() {
     bachepalliBRating: "",
     sarpanchSupport: "",
     mainProblem: "",
+    majorityWho: "",
+    crazeWho: "",
   });
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
@@ -148,6 +189,8 @@ export default function DarsiPoliticalSurvey() {
           bachepalli_rating: form.bachepalliBRating,
           sarpanch_support: form.sarpanchSupport,
           main_problem: form.mainProblem,
+          majority_who: form.majorityWho,
+          craze_who: form.crazeWho,
         }),
       });
 
@@ -173,7 +216,7 @@ export default function DarsiPoliticalSurvey() {
           <h2 style={{ fontSize: "24px", fontWeight: "700", color: "#1a1a2e", marginBottom: "12px" }}>ధన్యవాదాలు!</h2>
           <p style={{ color: "#666", fontSize: "15px", lineHeight: "1.7" }}>మీ సర్వే విజయవంతంగా సమర్పించబడింది. మీ అభిప్రాయం మాకు చాలా విలువైనది.</p>
           <button
-            onClick={() => { setForm({ mandal:"",village:"",age:"",gender:"",voted2024:"",voteNext:"",gottipatiRating:"",bachepalliBRating:"",sarpanchSupport:"",mainProblem:"" }); setSubmitted(false); }}
+            onClick={() => { setForm({ mandal:"",village:"",age:"",gender:"",voted2024:"",voteNext:"",gottipatiRating:"",bachepalliBRating:"",sarpanchSupport:"",mainProblem:"",majorityWho:"",crazeWho:"" }); setSubmitted(false); }}
             style={{ marginTop: "24px", background: "linear-gradient(135deg, #d4380d, #fa8c16)", color: "white", border: "none", borderRadius: "10px", padding: "12px 32px", fontSize: "15px", fontWeight: "600", cursor: "pointer" }}
           >
             మళ్ళీ సమర్పించు
@@ -202,7 +245,7 @@ export default function DarsiPoliticalSurvey() {
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "5px", background: "linear-gradient(90deg, #ff9933, #ffffff, #138808, #ffffff, #ff9933)" }} />
 
           <div style={{ display: "inline-block", background: "rgba(212,56,13,0.2)", border: "1px solid rgba(212,56,13,0.5)", borderRadius: "20px", padding: "4px 16px", marginBottom: "14px" }}>
-            <span style={{ color: "#fa8c16", fontSize: "12px", fontWeight: "700", letterSpacing: "2px" }}>BSR NEWS · PUBLIC POLL</span>
+            <span style={{ color: "#fa8c16", fontSize: "12px", fontWeight: "700", letterSpacing: "2px" }}>D7 NEWS · PUBLIC POLL</span>
           </div>
 
           <h1
@@ -219,7 +262,7 @@ export default function DarsiPoliticalSurvey() {
             DARSI POLITICAL SURVEY
           </h1>
           <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "13px", maxWidth: "460px", margin: "0 auto", lineHeight: "1.6", fontFamily: "'Noto Sans Telugu', sans-serif" }}>
-            ఈ సర్వే దర్శి నియోజకవర్గంలో ప్రజల అభిప్రాయాన్ని అర్థం చేసుకోవడానికి BSR News నిర్వహిస్తోంది. ఇది పూర్తిగా అనామకంగా ఉంటుంది.
+            ఈ సర్వే దర్శి నియోజకవర్గంలో ప్రజల అభిప్రాయాన్ని అర్థం చేసుకోవడానికి D7 News నిర్వహిస్తోంది. ఇది పూర్తిగా అనామకంగా ఉంటుంది.
           </p>
 
           <div style={{ display: "flex", justifyContent: "center", gap: "24px", marginTop: "20px" }}>
@@ -334,7 +377,25 @@ export default function DarsiPoliticalSurvey() {
             {errors.sarpanchSupport && <p style={{ color: "#d4380d", fontSize: "12px", marginTop: "8px" }}>దయచేసి సమాధానం ఎంచుకోండి</p>}
           </QuestionCard>
 
-          <QuestionCard number="10" label="మీ ఊరిలో ప్రధాన సమస్య ఏంటి?">
+          <QuestionCard number="10" label="దర్శి నియోజకవర్గంలో గొట్టిపాటి గారికి లేదా బాచేపల్లి శివప్రసాద్ రెడ్డి గారికి ఎవరికి ఎక్కువ మెజారిటీ వస్తుంది?">
+            <RadioGroup
+              name="majorityWho"
+              options={["గొట్టిపాటి", "బాచేపల్లి శివప్రసాద్ రెడ్డి"]}
+              value={form.majorityWho}
+              onChange={set("majorityWho")}
+            />
+          </QuestionCard>
+
+          <QuestionCard number="11" label="దర్శిలో బాచేపల్లి శివప్రసాద్ రెడ్డి గారికి లేదా గొట్టిపాటి గారికి ఎవరికి ఎక్కువ క్రేజ్ ఉంది?">
+            <RadioGroup
+              name="crazeWho"
+              options={["బాచేపల్లి శివప్రసాద్ రెడ్డి", "గొట్టిపాటి లక్ష్మి"]}
+              value={form.crazeWho}
+              onChange={set("crazeWho")}
+            />
+          </QuestionCard>
+
+          <QuestionCard number="12" label="మీ ఊరిలో ప్రధాన సమస్య ఏంటి?">
             <textarea
               value={form.mainProblem}
               onChange={(e) => set("mainProblem")(e.target.value)}
@@ -397,7 +458,7 @@ export default function DarsiPoliticalSurvey() {
             </button>
 
             <p style={{ textAlign: "center", color: "#999", fontSize: "12px", marginTop: "12px", fontFamily: "'Noto Sans Telugu', sans-serif" }}>
-              🔒 మీ డేటా పూర్తిగా అనామకంగా ఉంటుంది · BSR News
+              🔒 మీ డేటా పూర్తిగా అనామకంగా ఉంటుంది · D7 News
             </p>
           </div>
         </div>
