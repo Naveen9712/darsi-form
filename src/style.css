@@ -294,3 +294,64 @@ code {
     border-right-color: var(--border);
   }
 }
+
+/* ─── Survey Admin Panel: mobile responsive ───────────────── */
+@media (max-width: 768px) {
+  .survey-admin-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease-out;
+  }
+  .survey-admin-sidebar.survey-admin-sidebar-open {
+    transform: translateX(0);
+  }
+  .survey-admin-main {
+    margin-left: 0 !important;
+    padding: 16px !important;
+    min-width: 0;
+  }
+  .survey-admin-dashboard .survey-admin-header {
+    display: none;
+  }
+  .survey-admin-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    margin-bottom: 16px !important;
+  }
+  .survey-admin-stat-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .survey-admin-vote-summary-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .survey-admin-head2head-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .survey-admin-responses-toolbar {
+    flex-wrap: wrap;
+  }
+  .survey-admin-responses-toolbar input {
+    min-width: 0;
+  }
+  .survey-admin-pagination {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px !important;
+  }
+  .survey-admin-dashboard table {
+    font-size: 12px;
+  }
+  .survey-admin-dashboard th,
+  .survey-admin-dashboard td {
+    padding: 8px 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .survey-admin-kpi-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .survey-admin-vote-summary-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

@@ -1,5 +1,17 @@
 import { useState, useEffect } from "react";
 
+// Hook: true when viewport is <= 768px
+function useMediaQuery(query) {
+  const [matches, setMatches] = useState(typeof window !== "undefined" ? window.matchMedia(query).matches : false);
+  useEffect(() => {
+    const m = window.matchMedia(query);
+    const fn = () => setMatches(m.matches);
+    m.addEventListener("change", fn);
+    return () => m.removeEventListener("change", fn);
+  }, [query]);
+  return matches;
+}
+
 const API_BASE = "https://trendyhomevibe.com/wp-json/darsi-survey/v1";
 const ADMIN_USER = "admin";
 const ADMIN_PASS = "admin";
@@ -228,6 +240,8 @@ function LoginScreen({ onLogin }) {
 
 // ─── Dashboard ──────────────────────────────────────────────
 function Dashboard({ onLogout }) {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [tab, setTab] = useState("overview");
   const [stats, setStats] = useState(null);
   const [results, setResults] = useState([]);
@@ -296,14 +310,24 @@ function Dashboard({ onLogout }) {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#020617", fontFamily: "system-ui, sans-serif", display: "flex" }}>
+    <div className="survey-admin-dashboard" style={{ minHeight: "100vh", background: "#020617", fontFamily: "system-ui, sans-serif", display: "flex" }}>
+      {isMobile && sidebarOpen && (
+        <div
+          className="survey-admin-overlay"
+          onClick={() => setSidebarOpen(false)}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 199 }}
+        />
+      )}
 
       {/* Sidebar */}
-      <div style={{
-        width: 220, background: "#0f172a", borderRight: "1px solid #1e293b",
-        display: "flex", flexDirection: "column", padding: "24px 0",
-        position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 100,
-      }}>
+      <div
+        className={`survey-admin-sidebar ${isMobile && sidebarOpen ? "survey-admin-sidebar-open" : ""}`}
+        style={{
+          width: 220, background: "#0f172a", borderRight: "1px solid #1e293b",
+          display: "flex", flexDirection: "column", padding: "24px 0",
+          position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 200,
+        }}
+      >
         <div style={{ padding: "0 20px 24px", borderBottom: "1px solid #1e293b" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <span style={{ fontSize: 22 }}>🗳️</span>
@@ -318,7 +342,7 @@ function Dashboard({ onLogout }) {
           {navItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setTab(item.id)}
+              onClick={() => { setTab(item.id); if (isMobile) setSidebarOpen(false); }}
               style={{
                 width: "100%", display: "flex", alignItems: "center", gap: 10,
                 padding: "10px 12px", borderRadius: 10, border: "none",
@@ -356,9 +380,28 @@ function Dashboard({ onLogout }) {
       </div>
 
       {/* Main */}
-      <div style={{ marginLeft: 220, flex: 1, padding: "28px 32px", minHeight: "100vh" }}>
+      <div className="survey-admin-main" style={{ marginLeft: 220, flex: 1, padding: "28px 32px", minHeight: "100vh" }}>
+        {/* Mobile header with hamburger */}
+        {isMobile && (
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(true)}
+              style={{
+                padding: "10px 12px", borderRadius: 10, border: "1px solid #1e293b",
+                background: "#0f172a", color: "#f1f5f9", fontSize: 18, cursor: "pointer",
+              }}
+              aria-label="Open menu"
+            >
+              ☰
+            </button>
+            <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#f1f5f9" }}>
+              {navItems.find((n) => n.id === tab)?.icon} {navItems.find((n) => n.id === tab)?.label}
+            </h2>
+          </div>
+        )}
 
-        <div style={{ marginBottom: 28 }}>
+        <div style={{ marginBottom: 28 }} className="survey-admin-header">
           <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: "#f1f5f9" }}>
             {navItems.find((n) => n.id === tab)?.icon} {navItems.find((n) => n.id === tab)?.label}
           </h2>
@@ -376,14 +419,14 @@ function Dashboard({ onLogout }) {
             {/* ── OVERVIEW TAB ── */}
             {tab === "overview" && stats && (
               <>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
+                <div className="survey-admin-kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 24 }}>
                   <KpiCard label="Total Responses"  value={stats.total_responses}                              sub="All time submissions"                           color="#f97316" />
                   <KpiCard label="Mandals Covered"  value={stats.by_mandal?.length || 0}                       sub="Active mandals"                                 color="#3b82f6" />
                   <KpiCard label="Top Vote Next"     value={stats.by_vote_next?.[0]?.vote_next?.split(" ")[0] || "—"} sub={`${stats.by_vote_next?.[0]?.count || 0} votes`}  color="#10b981" />
                   <KpiCard label="Top Sarpanch"      value={stats.by_sarpanch?.[0]?.sarpanch_support || "—"}   sub={`${stats.by_sarpanch?.[0]?.count || 0} responses`} color="#a855f7" />
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                <div className="survey-admin-stat-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                   <StatCard title="Responses by Mandal" icon="📍">
                     {stats.by_mandal?.map((m, i) => (
                       <BarStat key={m.mandal} label={m.mandal} count={+m.count} total={stats.total_responses} color={COLORS[i % COLORS.length]} />
@@ -433,7 +476,7 @@ function Dashboard({ onLogout }) {
 
             {/* ── VOTES TAB ── */}
             {tab === "votes" && stats && (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div className="survey-admin-stat-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <StatCard title="2024 Vote (Past)" icon="🗓️">
                   {stats.by_voted_2024?.length ? stats.by_voted_2024.map((v, i) => (
                     <BarStat key={v.voted_2024} label={v.voted_2024} count={+v.count} total={stats.total_responses} color={COLORS[i % COLORS.length]} />
@@ -448,7 +491,7 @@ function Dashboard({ onLogout }) {
 
                 <div style={{ gridColumn: "1 / -1" }}>
                   <StatCard title="Vote Intent Summary" icon="📈">
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 12, marginTop: 4 }}>
+                    <div className="survey-admin-vote-summary-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 12, marginTop: 4 }}>
                       {stats.by_vote_next?.map((v, i) => (
                         <div key={v.vote_next} style={{
                           background: "#020617", borderRadius: 10, padding: "14px 16px",
@@ -467,7 +510,7 @@ function Dashboard({ onLogout }) {
 
             {/* ── LEADERSHIP TAB ── */}
             {tab === "leaders" && stats && (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div className="survey-admin-stat-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
 
                 {/* Approval rating cards (existing) */}
                 {[
@@ -525,7 +568,7 @@ function Dashboard({ onLogout }) {
                 {/* ── NEW: Side-by-side summary ── */}
                 <div style={{ gridColumn: "1 / -1" }}>
                   <StatCard title="Head-to-Head Summary" icon="⚔️">
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <div className="survey-admin-head2head-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                       {[
                         { label: "Majority Prediction", data: stats.by_majority_who, fieldKey: "majority_who" },
                         { label: "Popularity / Craze",  data: stats.by_craze_who,    fieldKey: "craze_who"    },
@@ -558,7 +601,7 @@ function Dashboard({ onLogout }) {
             {/* ── RESPONSES TAB ── */}
             {tab === "responses" && (
               <>
-                <div style={{ display: "flex", gap: 12, marginBottom: 20, alignItems: "center" }}>
+                <div className="survey-admin-responses-toolbar" style={{ display: "flex", gap: 12, marginBottom: 20, alignItems: "center" }}>
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -614,7 +657,7 @@ function Dashboard({ onLogout }) {
                       </table>
                     </div>
 
-                    <div style={{ padding: "14px 20px", borderTop: "1px solid #1e293b", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div className="survey-admin-pagination" style={{ padding: "14px 20px", borderTop: "1px solid #1e293b", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                       <span style={{ fontSize: 12, color: "#475569" }}>Page {page} of {totalPages}</span>
                       <div style={{ display: "flex", gap: 8 }}>
                         {[
